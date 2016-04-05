@@ -42,14 +42,7 @@ defmodule Issues.CLI do
     |> convert_to_list_of_maps
     |> sort_into_ascending_order
     |> Enum.take(count)
-  end
-
-  def decode_response(:ok, body), do: body
-
-  def decode_response({:error, error}) do
-    {_, message} = List.keyfind(error, "message", 0)
-    IO.puts "Error fetching from github #{message}"
-    System.halt(2)
+    |> print_issues_table
   end
 
   def process(:help) do
@@ -59,7 +52,15 @@ defmodule Issues.CLI do
     System.halt(0)
   end
 
-  def project({user, project, count}) do
+  def decode_response({:ok, body}), do: body
+
+  def decode_response({:error, error}) do
+    {_, message} = List.keyfind(error, "message", 0)
+    IO.puts "Error fetching from github #{message}"
+    System.halt(2)
+  end
+
+  def project({user, project, _count}) do
     Issues.GithubIssues.fetch(user, project)
   end
 
@@ -72,6 +73,29 @@ defmodule Issues.CLI do
     Enum.sort(list_of_issues, fn(i1, i2) ->
       i1["created_at"] <= i2["created_at"]
     end)
+  end
+
+  def print_issues_table(list) do
+    list
+    |> print_headers
+    |> print_body
+  end
+
+  def print_headers(list_of_issues) do
+    ["#", "created_at", "title"]
+    |> Enum.join("\t")
+    |> IO.puts
+
+    list_of_issues
+  end
+
+  def print_body([]), do: :done
+
+  def print_body([%{"number" => number, "created_at" => created_at, "title" => title} | t]) do
+    [number, created_at, title]
+    |> Enum.join("\t")
+    |> IO.puts
+    print_body(t)
   end
 
 end
