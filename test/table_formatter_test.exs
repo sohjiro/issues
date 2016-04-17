@@ -22,5 +22,10 @@ defmodule TableFormatterTest do
     assert List.last(columns) == ["r1+++c4", "r2 c4", "r3 c4", "r4 c4"]
   end
 
+  test "column widths" do
+    widths = TF.widths_of(split_with_three_columns)
+    assert widths == [5, 6, 7]
+  end
+
 
 end
