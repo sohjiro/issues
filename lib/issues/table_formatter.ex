@@ -57,9 +57,9 @@ defmodule Issues.TableFormatter do
   a column, return a list containing the maximum width of each column
 
   ## Example
-    iex> data = [ [ "cat", "wombat", "elk" ], [ "mongoose", "ant", "gnu" ] ]
+    iex> data = [ [ "cat", "wombat", "elk" ], [ "mongoose", "ant", "gnu" ] ]
     iex> Issues.TableFormatter.widths_of(data)
-    [6, 8]
+    [ 6, 8 ]
   """
   def widths_of(columns) do
     for column <- columns, do: column |> map(&String.length/1) |> max
@@ -71,7 +71,7 @@ defmodule Issues.TableFormatter do
 
   ## Example
     iex> widths = [5, 6, 99]
-    iex> Issues.format_for(widths)
+    iex> Issues.TableFormatter.format_for(widths)
     "~-5s | ~-6s | ~-99s~n"
   """
   def format_for(column_widths) do
@@ -84,7 +84,7 @@ defmodule Issues.TableFormatter do
 
   ## Example
     iex> widths = [5,6,9]
-    iex> Issues.separator(widths)
+    iex> Issues.TableFormatter.separator(widths)
     "------+--------+----------"
   """
   def separator(column_widths) do
